@@ -5,7 +5,6 @@ import hr.eestec_zg.frmscore.utilities.Util;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -66,11 +65,6 @@ public class DataSourceConfig implements TransactionManagementConfigurer {
 
     @Profile("production")
     public static class ProductionDataSourceConfig {
-        @Bean
-        public DataSource dataSource() {
-            return new JndiDataSourceLookup().getDataSource("jdbc/frmsbackend");
-        }
-
         @Bean
         public Properties hibernateProperties() {
             return Util.props(

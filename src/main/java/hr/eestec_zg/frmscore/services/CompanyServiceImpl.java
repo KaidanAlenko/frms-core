@@ -6,10 +6,12 @@ import hr.eestec_zg.frmscore.domain.models.CompanyType;
 import hr.eestec_zg.frmscore.exceptions.CompanyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
