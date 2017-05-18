@@ -8,17 +8,15 @@ import hr.eestec_zg.frmscore.domain.models.SponsorshipType;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.User;
+import hr.eestec_zg.frmscore.domain.models.dto.TaskDto;
 import hr.eestec_zg.frmscore.exceptions.TaskNotFoundException;
 import hr.eestec_zg.frmscore.exceptions.UserNotFoundException;
 import hr.eestec_zg.frmscore.services.TaskService;
-
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,7 +32,7 @@ public class TaskServiceTest extends TestBase {
     private Company company;
 
     @Before
-    public void setTestData(){
+    public void setTestData() {
         event = new Event("E", "E", "2017");
         user = new User("F", "L", "email1", "pass1", "0001", Role.USER);
         company = new Company("COMPANY", "C", CompanyType.COMPUTING);
@@ -46,24 +44,24 @@ public class TaskServiceTest extends TestBase {
     }
 
     @Test
-    public void testCreateTask(){
+    public void testCreateTask() {
         user2 = new User("Fico", "Ls", "emaail1", "psass1", "0001", Role.USER);
         userRepository.createUser(user2);
-        Task task = new Task(event, company, user2, SponsorshipType.FINANCIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
-        taskService.createTask(task);
+        TaskDto task = new TaskDto(event.getId(), company.getId(), user2.getId(), SponsorshipType.FINANCIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+        Task newTask = taskService.createTask(task);
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
-        assertTrue(tasks.size() == 2 && tasks.contains(task));
+        assertTrue(tasks.size() == 2 && tasks.contains(newTask));
     }
 
     @Test
-    public void testCreateDeleteTask(){
+    public void testCreateDeleteTask() {
         user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER);
         userRepository.createUser(user2);
-        Task task = new Task(event, company, user2, SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
-        taskService.createTask(task);
+        TaskDto task = new TaskDto(event.getId(), company.getId(), user2.getId(), SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+        Task newTask = taskService.createTask(task);
         taskService.deleteTask(t1);
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
-        assertTrue(tasks.size() == 1 && tasks.contains(task));
+        assertTrue(tasks.size() == 1 && tasks.contains(newTask));
     }
 
     @Test
@@ -72,42 +70,55 @@ public class TaskServiceTest extends TestBase {
         userRepository.createUser(user2);
         Task task = taskService.getTask(t1.getId());
         task.setAssignee(user2);
-        taskService.updateTask(task);
+
+        TaskDto taskDto = new TaskDto(
+                task.getEvent().getId(),
+                task.getCompany().getId(),
+                task.getAssignee().getId(),
+                task.getType(),
+                task.getCallTime(),
+                task.getMailTime(),
+                task.getFollowUpTime(),
+                task.getStatus(),
+                task.getNotes());
+
+        taskService.updateTask(task.getId(), taskDto);
+
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
         assertTrue(tasks.size() == 1 && tasks.contains(task));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIllegalArgumentExceptionCreateTask(){
+    public void testIllegalArgumentExceptionCreateTask() {
         taskService.createTask(null);
     }
 
     @Test(expected = TaskNotFoundException.class)
-    public void testTaskNotFoundExceptionGetTask(){
+    public void testTaskNotFoundExceptionGetTask() {
 
         taskService.getTask(7777L);
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void testAssigneeNotFoundException(){
-        taskService.assignToUser(7777L,t1);
+    public void testAssigneeNotFoundException() {
+        taskService.assignToUser(7777L, t1);
     }
 
     @Test
-    public void testAssignToUser(){
+    public void testAssignToUser() {
         t2 = new Task(event, company, null, SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
-    taskService.assignToUser(user.getId(),t2);
-    assertNotNull(t2.getAssignee());
+        taskService.assignToUser(user.getId(), t2);
+        assertNotNull(t2.getAssignee());
     }
 
     @Test
-    public void testGetTasksByCompany(){
+    public void testGetTasksByCompany() {
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
         assertEquals(1, tasks.size());
-     }
+    }
 
     @Test
-    public void testGetTasksByEvent(){
+    public void testGetTasksByEvent() {
         List<Task> tasks = taskService.getTasksByEvent(event.getId());
         assertEquals(1, tasks.size());
     }
