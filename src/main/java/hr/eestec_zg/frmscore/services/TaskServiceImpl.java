@@ -4,6 +4,7 @@ import hr.eestec_zg.frmscore.domain.CompanyRepository;
 import hr.eestec_zg.frmscore.domain.EventRepository;
 import hr.eestec_zg.frmscore.domain.TaskRepository;
 import hr.eestec_zg.frmscore.domain.UserRepository;
+import hr.eestec_zg.frmscore.domain.dto.TaskStatisticsDto;
 import hr.eestec_zg.frmscore.domain.models.Company;
 import hr.eestec_zg.frmscore.domain.models.Event;
 import hr.eestec_zg.frmscore.domain.models.Task;
@@ -157,7 +158,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getTasksByCompany(Long companyId) {
         if (companyId == null) {
-            throw new IllegalArgumentException("CompanyId not defined");
+            throw new IllegalArgumentException("Company id not defined");
         }
         Company company = companyRepository.getCompany(companyId);
         if (company == null) {
@@ -172,5 +173,17 @@ public class TaskServiceImpl implements TaskService {
             throw new IllegalArgumentException("Status not defined");
         }
         return taskRepository.getTaskByStatus(status);
+    }
+
+    @Override
+    public TaskStatisticsDto getStatistics(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User id not defined");
+        }
+        Long successfulTasks = this.taskRepository.countTasksByStatus(userId, TaskStatus.ACCEPTED);
+        Long unsuccessfulTasks = this.taskRepository.countTasksByStatus(userId, TaskStatus.DECLINED);
+        Long numberOfEvents = this.taskRepository.countDistinctEventsOfUser(userId);
+
+        return new TaskStatisticsDto(successfulTasks, unsuccessfulTasks, numberOfEvents);
     }
 }

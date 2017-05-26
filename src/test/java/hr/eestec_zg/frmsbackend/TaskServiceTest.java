@@ -1,5 +1,6 @@
 package hr.eestec_zg.frmsbackend;
 
+import hr.eestec_zg.frmscore.domain.dto.TaskStatisticsDto;
 import hr.eestec_zg.frmscore.domain.models.Company;
 import hr.eestec_zg.frmscore.domain.models.CompanyType;
 import hr.eestec_zg.frmscore.domain.models.Event;
@@ -121,5 +122,14 @@ public class TaskServiceTest extends TestBase {
     public void testGetTasksByEvent() {
         List<Task> tasks = taskService.getTasksByEvent(event.getId());
         assertEquals(1, tasks.size());
+    }
+
+    @Test
+    public void testGetStatisticsForTask() {
+        TaskStatisticsDto taskStatisticsDto = taskService.getStatistics(t1.getAssignee().getId());
+
+        assertEquals(0, (long) taskStatisticsDto.getSuccessful());
+        assertEquals(0, (long) taskStatisticsDto.getUnsuccessful());
+        assertEquals(1, (long) taskStatisticsDto.getNumberOfEvents());
     }
 }

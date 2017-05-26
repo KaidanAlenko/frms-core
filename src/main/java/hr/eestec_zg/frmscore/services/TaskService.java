@@ -1,6 +1,7 @@
 package hr.eestec_zg.frmscore.services;
 
 
+import hr.eestec_zg.frmscore.domain.dto.TaskStatisticsDto;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.dto.TaskDto;
@@ -25,4 +26,6 @@ public interface TaskService {
     List<Task> getTasksByCompany(Long companyId);
 
     List<Task> getTaskByStatus(TaskStatus status);
+
+    TaskStatisticsDto getStatistics(Long userId);
 }
