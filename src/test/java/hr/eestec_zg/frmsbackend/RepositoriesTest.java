@@ -267,10 +267,28 @@ public class RepositoriesTest extends TestBase {
         assertTrue("There shouldn't be task in repository with status " + TaskStatus.IN_PROGRESS, foundTasks.isEmpty());
         logger.debug("Updated user: {}", foundTask);
 
+        /* counting tasks by userId and status */
+        Long counted = taskRepository.countTasksByStatus(assignee.getId(), TaskStatus.ACCEPTED);
+        assertEquals(1L, (long) counted);
+
+        counted = taskRepository.countTasksByStatus(assignee.getId() + 1, TaskStatus.ACCEPTED);
+        assertEquals(0L, (long) counted);
+
+        counted = taskRepository.countTasksByStatus(assignee.getId(), TaskStatus.IN_PROGRESS);
+        assertEquals(0L, (long) counted);
+
+        /* counting all distinct events */
+        counted = taskRepository.countDistinctEventsOfUser(assignee.getId());
+        assertEquals(1L, (long) counted);
+
+        counted = taskRepository.countDistinctEventsOfUser(assignee.getId() + 1);
+        assertEquals(0L, (long) counted);
+
         /* deleting task */
         taskRepository.deleteTask(foundTask);
         assertTrue("There shouldn't be an task in repository", taskRepository.getTasks().isEmpty());
         logger.debug("Deleted user: {}", foundTask);
+
     }
 
     private Event sampleEvent() {

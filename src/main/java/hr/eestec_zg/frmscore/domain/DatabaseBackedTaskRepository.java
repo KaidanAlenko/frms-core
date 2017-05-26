@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task> implements TaskRepository {
 
+    private static final String ID = "id";
     private static final String STATUS = "status";
     private static final String ASSIGNEE = "assignee";
     private static final String EVENT = "event";
@@ -89,6 +90,36 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
                 .stream()
                 .filter(condition)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long countTasksByStatus(Long userId, TaskStatus status) {
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+
+        Root<Task> root = query.from(Task.class);
+        query.select(cb.count(root));
+        query.where(
+                cb.and(
+                        cb.equal(root.get(STATUS).as(TaskStatus.class), status),
+                        cb.equal(root.get(ASSIGNEE).get(ID).as(Long.class), userId)
+                )
+        );
+
+        return getSession().createQuery(query).getSingleResult();
+    }
+
+    @Override
+    public Long countDistinctEventsOfUser(Long userId) {
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+
+        Root<Task> root = query.from(Task.class);
+        query.select(cb.countDistinct(root));
+
+        query.where(cb.equal(root.get(ASSIGNEE).get(ID).as(Long.class), userId));
+
+        return getSession().createQuery(query).getSingleResult();
     }
 
     private Task getTask(CriteriaQuery<Task> query) {

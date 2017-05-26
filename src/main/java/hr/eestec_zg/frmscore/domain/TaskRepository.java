@@ -28,6 +28,10 @@ public interface TaskRepository {
 
     List<Task> getTasks(Predicate<Task> condition);
 
+    Long countTasksByStatus(Long userId, TaskStatus status);
+
+    Long countDistinctEventsOfUser(Long userId);
+
     default List<Task> getTasks() {
         return getTasks(t -> true);
     }
