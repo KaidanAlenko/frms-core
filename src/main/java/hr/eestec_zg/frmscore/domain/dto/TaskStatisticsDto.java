@@ -5,6 +5,8 @@ public class TaskStatisticsDto {
     private Long unsuccessful;
     private Long numberOfEvents;
 
+    private TaskStatisticsDto() {}
+
     public TaskStatisticsDto(Long successful, Long unsuccessful, Long numberOfEvents) {
         this.successful = successful;
         this.unsuccessful = unsuccessful;
