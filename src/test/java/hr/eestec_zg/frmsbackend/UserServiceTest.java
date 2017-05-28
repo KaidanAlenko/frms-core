@@ -48,7 +48,7 @@ public class UserServiceTest extends TestBase {
         taskRepository.createTask(task);
         // method
         User u = userRepository.getUserByEmail("email1");
-        List<Task> tasks = userService.getAssignedTasks(u.getId());
+        List<Task> tasks = userService.getAssignedTasks(u.getId(), TaskStatus.IN_PROGRESS);
         // check
         assertEquals(1,tasks.size());
     }
@@ -60,7 +60,7 @@ public class UserServiceTest extends TestBase {
         taskRepository.createTask(task);
         // method
         User u = userRepository.getUserByEmail("email1");
-        List<Task> tasks = userService.getAssignedTasks(u.getId());
+        List<Task> tasks = userService.getAssignedTasks(u.getId(), TaskStatus.IN_PROGRESS);
         // check
         assertEquals(0, tasks.size());
     }

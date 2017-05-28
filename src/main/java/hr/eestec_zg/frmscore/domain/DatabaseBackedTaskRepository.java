@@ -56,6 +56,19 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
     }
 
     @Override
+    public List<Task> getTasksByAssignee(User user, TaskStatus status) {
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Task> query = cb.createQuery(Task.class);
+        Root<Task> root = query.from(Task.class);
+
+        query.where(cb.and(
+                cb.equal(root.get(ASSIGNEE).as(User.class), user),
+                cb.equal(root.get(STATUS).as(TaskStatus.class), status)
+        ));
+        return getTasks(query.select(root));
+    }
+
+    @Override
     public List<Task> getTasksByEvent(Event event) {
         CriteriaBuilder cb = criteriaBuilder();
         CriteriaQuery<Task> query = cb.createQuery(Task.class);

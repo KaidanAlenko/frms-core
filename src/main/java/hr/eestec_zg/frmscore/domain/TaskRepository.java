@@ -20,6 +20,8 @@ public interface TaskRepository {
 
     List<Task> getTasksByAssignee(User user);
 
+    List<Task> getTasksByAssignee(User user, TaskStatus status);
+
     List<Task> getTasksByEvent(Event event);
 
     List<Task> getTasksByCompany(Company company);

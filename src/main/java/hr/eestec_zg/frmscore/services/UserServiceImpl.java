@@ -4,6 +4,7 @@ import hr.eestec_zg.frmscore.domain.TaskRepository;
 import hr.eestec_zg.frmscore.domain.UserRepository;
 import hr.eestec_zg.frmscore.domain.models.Role;
 import hr.eestec_zg.frmscore.domain.models.Task;
+import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.User;
 import hr.eestec_zg.frmscore.exceptions.InvalidPasswordException;
 import hr.eestec_zg.frmscore.exceptions.UserNotFoundException;
@@ -27,12 +28,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Task> getAssignedTasks(Long userId) {
+    public List<Task> getAssignedTasks(Long userId, TaskStatus status) {
         User user = userRepository.getUser(userId);
         if (user == null) {
             throw new UserNotFoundException();
         }
-        return taskRepository.getTasksByAssignee(user);
+        return taskRepository.getTasksByAssignee(user, status);
     }
 
     @Override
