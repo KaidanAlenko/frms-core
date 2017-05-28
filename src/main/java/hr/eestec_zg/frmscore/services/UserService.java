@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface UserService {
     List<Task> getAssignedTasks(Long userId, TaskStatus status);
+    List<Task> getAssignedTasks(Long userId);
 
     List<User> getAllUsers();
     List<User> getUsersByRole(Role role);
