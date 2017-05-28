@@ -36,16 +36,27 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+    @Column
+    private String notes;
 
     public User() {}
 
-    public User(String firstName, String lastName, String email, String password, String phoneNumber, Role role) {
+    public User(
+            String firstName,
+            String lastName,
+            String email,
+            String password,
+            String phoneNumber,
+            Role role,
+            String notes) {
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.notes = notes;
     }
 
     public long getId() {
@@ -104,6 +115,14 @@ public class User {
         this.role = role;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -126,9 +145,9 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", role=" + role +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 }

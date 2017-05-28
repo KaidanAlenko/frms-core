@@ -13,6 +13,7 @@ CREATE TABLE users (
   password     VARCHAR(100)        NOT NULL,
   phone_number VARCHAR(20),
   role         VARCHAR(15)         NOT NULL,
+  notes        TEXT,
   CONSTRAINT pk_users PRIMARY KEY (id),
   CONSTRAINT fk_user_role FOREIGN KEY (role) REFERENCES user_roles (role)
 );

@@ -35,7 +35,7 @@ public class TaskServiceTest extends TestBase {
     @Before
     public void setTestData() {
         event = new Event("E", "E", "2017");
-        user = new User("F", "L", "email1", "pass1", "0001", Role.USER);
+        user = new User("F", "L", "email1", "pass1", "0001", Role.USER, null);
         company = new Company("COMPANY", "C", CompanyType.COMPUTING);
         companyRepository.createCompany(company);
         eventRepository.createEvent(event);
@@ -46,7 +46,7 @@ public class TaskServiceTest extends TestBase {
 
     @Test
     public void testCreateTask() {
-        user2 = new User("Fico", "Ls", "emaail1", "psass1", "0001", Role.USER);
+        user2 = new User("Fico", "Ls", "emaail1", "psass1", "0001", Role.USER, null);
         userRepository.createUser(user2);
         TaskDto task = new TaskDto(event.getId(), company.getId(), user2.getId(), SponsorshipType.FINANCIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
         Task newTask = taskService.createTask(task);
@@ -56,7 +56,7 @@ public class TaskServiceTest extends TestBase {
 
     @Test
     public void testCreateDeleteTask() {
-        user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER);
+        user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER, null);
         userRepository.createUser(user2);
         TaskDto task = new TaskDto(event.getId(), company.getId(), user2.getId(), SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
         Task newTask = taskService.createTask(task);
@@ -67,7 +67,7 @@ public class TaskServiceTest extends TestBase {
 
     @Test
     public void testGetUpdateTask() {
-        user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER);
+        user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER, null);
         userRepository.createUser(user2);
         Task task = taskService.getTask(t1.getId());
         task.setAssignee(user2);

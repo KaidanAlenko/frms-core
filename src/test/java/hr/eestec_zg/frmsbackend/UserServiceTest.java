@@ -31,9 +31,9 @@ public class UserServiceTest extends TestBase {
     public void setTestData(){
         c = new Company("COMPANY", "C", CompanyType.COMPUTING);
         event = new Event("E", "E", "2017");
-        user1 = new User("F", "L", "email1", "pass1", "0001", Role.USER);
-        user2 = new User("F", "A", "email2", "pass2", "0002", Role.COORDINATOR);
-        user3 = new User("G", "L", "email3", "pass3", "0003", Role.COORDINATOR);
+        user1 = new User("F", "L", "email1", "pass1", "0001", Role.USER, null);
+        user2 = new User("F", "A", "email2", "pass2", "0002", Role.COORDINATOR, null);
+        user3 = new User("G", "L", "email3", "pass3", "0003", Role.COORDINATOR, null);
         companyRepository.createCompany(c);
         eventRepository.createEvent(event);
         userRepository.createUser(user1);
@@ -122,7 +122,7 @@ public class UserServiceTest extends TestBase {
 
     @Test
     public void testCreateUser(){
-        user1 = new User("Fafa", "Fufa", "em11aial1@ss", "pass1", "0001", Role.USER);
+        user1 = new User("Fafa", "Fufa", "em11aial1@ss", "pass1", "0001", Role.USER, null);
         userService.createUser(user1);
         assertEquals("em11aial1@ss",userService.getUserByEmail("em11aial1@ss").getEmail());
     }
