@@ -1,6 +1,7 @@
 package hr.eestec_zg.frmscore.domain;
 
 import hr.eestec_zg.frmscore.domain.models.Company;
+import hr.eestec_zg.frmscore.domain.models.CompanyType;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Co
 
     private static final String NAME = "name";
     private static final String SHORT_NAME = "shortName";
+    private static final String TYPE = "type";
 
     @Override
     public void createCompany(Company company) {
@@ -50,6 +52,34 @@ public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Co
                         cb.like(cb.lower(root.get(NAME)), searchTerm),
                         cb.like(cb.lower(root.get(SHORT_NAME)), searchTerm)));
         return getCompany(query.select(root));
+    }
+
+    @Override
+    public List<Company> filterCompanies(String name, CompanyType type) {
+        String searchTerm = null;
+        if (name != null) {
+            searchTerm = "%" + name.toLowerCase() + "%";
+        }
+
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Company> query = cb.createQuery(Company.class);
+        Root<Company> root = query.from(Company.class);
+
+        query.where(
+                cb.and(
+                        cb.or(
+                                cb.equal(cb.literal(name == null), true),
+                                cb.like(cb.lower(root.get(NAME)).as(String.class), searchTerm),
+                                cb.like(cb.lower(root.get(SHORT_NAME)).as(String.class), searchTerm)
+                        ),
+                        cb.or(
+                                cb.equal(cb.literal(type == null), true),
+                                cb.equal(root.get(TYPE).as(CompanyType.class), type)
+                        )
+                )
+        );
+
+        return getSession().createQuery(query).getResultList();
     }
 
     @Override

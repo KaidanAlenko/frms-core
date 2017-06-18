@@ -134,6 +134,12 @@ public class RepositoriesTest extends TestBase {
         assertNotNull("There should be one company in repository by id: " + foundCompany.getId(),
                 companyRepository.getCompany(foundCompany.getId()));
 
+        /* filtering */
+        List<Company> foundCompanies = companyRepository.filterCompanies(
+                TEST_SEARCH_COMPANY_NO_2, CompanyType.COMPUTING);
+
+        assertEquals(1, foundCompanies.size());
+
         /* updating company */
         foundCompany.setShortName(TEST_UPDATE_COMPANY_NAME);
         companyRepository.updateCompany(foundCompany);
