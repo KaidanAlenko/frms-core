@@ -2,6 +2,7 @@ package hr.eestec_zg.frmscore.services;
 
 
 import hr.eestec_zg.frmscore.domain.dto.TaskStatisticsDto;
+import hr.eestec_zg.frmscore.domain.models.SponsorshipType;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.dto.TaskDto;
@@ -20,6 +21,8 @@ public interface TaskService {
     Task getTask(Long id);
 
     List<Task> getTasksByAssignee(Long userId);
+
+    List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status);
 
     List<Task> getTasksByEvent(Long eventId);
 

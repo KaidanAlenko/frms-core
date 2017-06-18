@@ -2,6 +2,7 @@ package hr.eestec_zg.frmscore.domain;
 
 import hr.eestec_zg.frmscore.domain.models.Company;
 import hr.eestec_zg.frmscore.domain.models.Event;
+import hr.eestec_zg.frmscore.domain.models.SponsorshipType;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.User;
@@ -29,6 +30,8 @@ public interface TaskRepository {
     List<Task> getTaskByStatus(TaskStatus status);
 
     List<Task> getTasks(Predicate<Task> condition);
+
+    List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status);
 
     Long countTasksByStatus(Long userId, TaskStatus status);
 

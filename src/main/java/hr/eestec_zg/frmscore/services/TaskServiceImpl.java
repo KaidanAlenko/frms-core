@@ -7,6 +7,7 @@ import hr.eestec_zg.frmscore.domain.UserRepository;
 import hr.eestec_zg.frmscore.domain.dto.TaskStatisticsDto;
 import hr.eestec_zg.frmscore.domain.models.Company;
 import hr.eestec_zg.frmscore.domain.models.Event;
+import hr.eestec_zg.frmscore.domain.models.SponsorshipType;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.User;
@@ -141,6 +142,11 @@ public class TaskServiceImpl implements TaskService {
             throw new UserNotFoundException();
         }
         return taskRepository.getTasksByAssignee(user);
+    }
+
+    @Override
+    public List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status) {
+        return this.taskRepository.filterTasks(eventId, companyId, type, status);
     }
 
     @Override

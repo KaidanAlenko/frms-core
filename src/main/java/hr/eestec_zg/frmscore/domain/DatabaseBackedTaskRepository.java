@@ -2,6 +2,7 @@ package hr.eestec_zg.frmscore.domain;
 
 import hr.eestec_zg.frmscore.domain.models.Company;
 import hr.eestec_zg.frmscore.domain.models.Event;
+import hr.eestec_zg.frmscore.domain.models.SponsorshipType;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.User;
@@ -25,6 +26,7 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
     private static final String ASSIGNEE = "assignee";
     private static final String EVENT = "event";
     private static final String COMPANY = "company";
+    private static final String TYPE = "type";
 
     @Override
     public void createTask(Task task) {
@@ -103,6 +105,37 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
                 .stream()
                 .filter(condition)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status) {
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Task> query = cb.createQuery(Task.class);
+
+        Root<Task> root = query.from(Task.class);
+
+        query.where(
+                cb.and(
+                        cb.or(
+                                cb.equal(cb.literal(eventId == null), true),
+                                cb.equal(root.get(EVENT).get(ID).as(Integer.class), eventId)
+                        ),
+                        cb.or(
+                                cb.equal(cb.literal(companyId == null), true),
+                                cb.equal(root.get(COMPANY).get(ID).as(Integer.class), companyId)
+                        ),
+                        cb.or(
+                                cb.equal(cb.literal(type == null), true),
+                                cb.equal(root.get(TYPE).as(SponsorshipType.class), type)
+                        ),
+                        cb.or(
+                                cb.equal(cb.literal(status == null), true),
+                                cb.equal(root.get(STATUS).as(TaskStatus.class), status)
+                        )
+                )
+        );
+
+        return getSession().createQuery(query).getResultList();
     }
 
     @Override
