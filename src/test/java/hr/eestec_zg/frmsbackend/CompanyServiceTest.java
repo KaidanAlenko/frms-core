@@ -97,6 +97,12 @@ public class CompanyServiceTest extends TestBase {
     }
 
     @Test
+    public void testFilterCompanies() {
+        List<Company> companies = companyService.filterCompanies("span", COMPUTING);
+        assertEquals(1, companies.size());
+    }
+
+    @Test
     public void testCreateCompanyAutomatization() {
         company3 = new Company("globallogic", "GL", "gll.com", "vukovarska 2", "poruke", CompanyType.AUTOMATIZATION);
         companyService.createCompany(company3);

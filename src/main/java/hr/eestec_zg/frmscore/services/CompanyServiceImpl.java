@@ -83,6 +83,11 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public List<Company> filterCompanies(String name, CompanyType type) {
+        return companyRepository.filterCompanies(name, type);
+    }
+
+    @Override
     public List<Company> getCompaniesByType(CompanyType companyType) {
         if (companyType == null) {
             throw new IllegalArgumentException("Company type not defined");
