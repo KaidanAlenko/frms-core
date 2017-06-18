@@ -22,7 +22,7 @@ public interface TaskService {
 
     List<Task> getTasksByAssignee(Long userId);
 
-    List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status);
+    List<Task> filterTasks(Integer eventId, Integer companyId, Integer userId, SponsorshipType type, TaskStatus status);
 
     List<Task> getTasksByEvent(Long eventId);
 

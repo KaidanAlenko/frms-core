@@ -108,7 +108,9 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
     }
 
     @Override
-    public List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status) {
+    public List<Task> filterTasks(
+            Integer eventId, Integer companyId, Integer userId, SponsorshipType type, TaskStatus status) {
+
         CriteriaBuilder cb = criteriaBuilder();
         CriteriaQuery<Task> query = cb.createQuery(Task.class);
 
@@ -123,6 +125,10 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
                         cb.or(
                                 cb.equal(cb.literal(companyId == null), true),
                                 cb.equal(root.get(COMPANY).get(ID).as(Integer.class), companyId)
+                        ),
+                        cb.or(
+                                cb.equal(cb.literal(userId == null), true),
+                                cb.equal(root.get(ASSIGNEE).get(ID).as(Integer.class), userId)
                         ),
                         cb.or(
                                 cb.equal(cb.literal(type == null), true),

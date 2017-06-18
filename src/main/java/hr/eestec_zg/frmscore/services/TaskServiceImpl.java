@@ -145,8 +145,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status) {
-        return this.taskRepository.filterTasks(eventId, companyId, type, status);
+    public List<Task> filterTasks(
+            Integer eventId, Integer companyId, Integer userId, SponsorshipType type, TaskStatus status) {
+
+        return this.taskRepository.filterTasks(eventId, companyId, userId, type, status);
     }
 
     @Override

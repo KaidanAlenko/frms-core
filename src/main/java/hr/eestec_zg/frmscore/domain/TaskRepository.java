@@ -31,7 +31,7 @@ public interface TaskRepository {
 
     List<Task> getTasks(Predicate<Task> condition);
 
-    List<Task> filterTasks(Integer eventId, Integer companyId, SponsorshipType type, TaskStatus status);
+    List<Task> filterTasks(Integer eventId, Integer companyId, Integer userId, SponsorshipType type, TaskStatus status);
 
     Long countTasksByStatus(Long userId, TaskStatus status);
 

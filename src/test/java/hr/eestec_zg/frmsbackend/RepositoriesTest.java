@@ -259,7 +259,7 @@ public class RepositoriesTest extends TestBase {
         assertNotNull("There should be task in repository with id " + foundTaskId, foundTask);
 
         /* filtering tasks */
-        foundTasks = taskRepository.filterTasks(null, null, SponsorshipType.FINANCIAL, TaskStatus.IN_PROGRESS);
+        foundTasks = taskRepository.filterTasks(null, null, null, SponsorshipType.FINANCIAL, TaskStatus.IN_PROGRESS);
         assertEquals(1, foundTasks.size());
 
         /* updating task */
