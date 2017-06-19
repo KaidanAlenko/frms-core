@@ -184,6 +184,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<Company> getCompaniesForWhichThereAreNoTasksForEvent(Long eventId) {
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event id not defined");
+        }
+        
+        List<Long> companyIds = taskRepository.getCompanyIdsByEventId(eventId);
+
+        return companyRepository.getCompaniesWhichAreNotInIdList(companyIds);
+    }
+
+    @Override
     public TaskStatisticsDto getStatistics(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("User id not defined");

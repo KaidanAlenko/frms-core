@@ -277,7 +277,7 @@ public class RepositoriesTest extends TestBase {
         assertEquals(1, foundTasks.size());
 
         /* counting distinct company ids */
-        List<Long> foundTaskIds = taskRepository.getTaskIdsByEventId(task.getEvent().getId());
+        List<Long> foundTaskIds = taskRepository.getCompanyIdsByEventId(task.getEvent().getId());
         assertEquals(1, foundTaskIds.size());
 
         /* updating task */

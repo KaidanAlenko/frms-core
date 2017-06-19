@@ -80,7 +80,7 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
     }
 
     @Override
-    public List<Long> getTaskIdsByEventId(Long eventId) {
+    public List<Long> getCompanyIdsByEventId(Long eventId) {
         CriteriaBuilder cb = criteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
 
