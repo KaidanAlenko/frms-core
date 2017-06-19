@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static hr.eestec_zg.frmscore.utilities.Util.randomUUID;
@@ -139,6 +141,12 @@ public class RepositoriesTest extends TestBase {
                 TEST_SEARCH_COMPANY_NO_2, CompanyType.COMPUTING);
 
         assertEquals(1, foundCompanies.size());
+
+        foundCompanies = companyRepository.getCompaniesWhichAreNotInIdList(Arrays.asList(-1L, -2L));
+        assertEquals(1, foundCompanies.size());
+
+        foundCompanies = companyRepository.getCompaniesWhichAreNotInIdList(Collections.singletonList(company.getId()));
+        assertEquals(0, foundCompanies.size());
 
         /* updating company */
         foundCompany.setShortName(TEST_UPDATE_COMPANY_NAME);
@@ -267,6 +275,10 @@ public class RepositoriesTest extends TestBase {
         /* filtering tasks */
         foundTasks = taskRepository.filterTasks(null, null, null, SponsorshipType.FINANCIAL, TaskStatus.IN_PROGRESS);
         assertEquals(1, foundTasks.size());
+
+        /* counting distinct company ids */
+        List<Long> foundTaskIds = taskRepository.getTaskIdsByEventId(task.getEvent().getId());
+        assertEquals(1, foundTaskIds.size());
 
         /* updating task */
         foundTask.setStatus(TaskStatus.ACCEPTED);

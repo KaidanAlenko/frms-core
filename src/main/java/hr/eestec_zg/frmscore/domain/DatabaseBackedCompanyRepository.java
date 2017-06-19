@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Company> implements CompanyRepository {
 
+    private static final String ID = "id";
     private static final String NAME = "name";
     private static final String SHORT_NAME = "shortName";
     private static final String TYPE = "type";
@@ -90,6 +91,20 @@ public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Co
                 .stream()
                 .filter(condition)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Company> getCompaniesWhichAreNotInIdList(List<Long> companyIds) {
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Company> query = cb.createQuery(Company.class);
+
+        Root<Company> root = query.from(Company.class);
+
+        query.where(
+                cb.not(root.get(ID).in(companyIds))
+        );
+
+        return getSession().createQuery(query).getResultList();
     }
 
     private Company getCompany(CriteriaQuery<Company> query) {

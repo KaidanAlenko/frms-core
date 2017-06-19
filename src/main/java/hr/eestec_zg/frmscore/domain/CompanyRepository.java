@@ -21,6 +21,8 @@ public interface CompanyRepository {
 
     List<Company> getCompanies(Predicate<Company> condition);
 
+    List<Company> getCompaniesWhichAreNotInIdList(List<Long> companyIds);
+
     default List<Company> getCompanies() {
         return getCompanies(c -> true);
     }

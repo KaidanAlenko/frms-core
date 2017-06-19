@@ -25,6 +25,8 @@ public interface TaskRepository {
 
     List<Task> getTasksByEvent(Event event);
 
+    List<Long> getTaskIdsByEventId(Long eventId);
+
     List<Task> getTasksByCompany(Company company);
 
     List<Task> getTaskByStatus(TaskStatus status);

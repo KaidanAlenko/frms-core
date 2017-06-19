@@ -80,6 +80,21 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
     }
 
     @Override
+    public List<Long> getTaskIdsByEventId(Long eventId) {
+        CriteriaBuilder cb = criteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+
+        Root<Task> root = query.from(Task.class);
+
+        query.where(cb.equal(root.get(EVENT).get(ID).as(Long.class), eventId));
+
+        query.select(cb.construct(Long.class, root.get(COMPANY).get(ID)));
+        query.distinct(true);
+
+        return getSession().createQuery(query).getResultList();
+    }
+
+    @Override
     public List<Task> getTasksByCompany(Company company) {
         CriteriaBuilder cb = criteriaBuilder();
         CriteriaQuery<Task> query = cb.createQuery(Task.class);
