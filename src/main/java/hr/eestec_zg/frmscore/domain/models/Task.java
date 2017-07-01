@@ -38,7 +38,8 @@ public class Task {
     @Column
     private String notes;
 
-    public Task() {}
+    public Task() {
+    }
 
     public Task(Event event, Company company, User assignee, SponsorshipType type, ZonedDateTime callTime,
                 ZonedDateTime mailTime, ZonedDateTime followUpTime, TaskStatus status, String notes) {

@@ -17,7 +17,8 @@ public class TaskDto {
     private TaskStatus status;
     private String notes;
 
-    public TaskDto() {}
+    public TaskDto() {
+    }
 
     public TaskDto(Long eventId, Long companyId, Long userId, SponsorshipType type, ZonedDateTime callTime,
                    ZonedDateTime mailTime, ZonedDateTime followUpTime, TaskStatus status, String notes) {
@@ -40,9 +41,11 @@ public class TaskDto {
         this.id = id;
     }
 
-    public Long getEventId() { return eventId; }
+    public Long getEventId() {
+        return eventId;
+    }
 
-    public void setEventId (long eventId) {
+    public void setEventId(long eventId) {
         this.eventId = eventId;
     }
 

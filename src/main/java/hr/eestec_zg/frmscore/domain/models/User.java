@@ -15,7 +15,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "users")
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotEmpty
     @Column(nullable = false)
@@ -39,7 +40,8 @@ public class User {
     @Column
     private String notes;
 
-    public User() {}
+    public User() {
+    }
 
     public User(
             String firstName,

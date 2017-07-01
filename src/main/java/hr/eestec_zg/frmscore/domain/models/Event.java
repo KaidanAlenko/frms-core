@@ -12,7 +12,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "event")
 public class Event {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotEmpty
     @Column(nullable = false)
@@ -23,7 +24,8 @@ public class Event {
     @Column(nullable = false)
     private String year;
 
-    private Event() {}
+    private Event() {
+    }
 
     public Event(String name, String shortName, String year) {
         this.name = name;

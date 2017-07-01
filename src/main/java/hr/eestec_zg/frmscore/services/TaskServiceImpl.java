@@ -188,7 +188,7 @@ public class TaskServiceImpl implements TaskService {
         if (eventId == null) {
             throw new IllegalArgumentException("Event id not defined");
         }
-        
+
         List<Long> companyIds = taskRepository.getCompanyIdsByEventId(eventId);
 
         if (companyIds.size() != 0) {

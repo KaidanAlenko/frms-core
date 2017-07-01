@@ -3,13 +3,13 @@ package hr.eestec_zg.frmscore.domain.models;
 import java.io.Serializable;
 
 public enum Role implements Serializable {
-    USER        ("USER"),
-    COORDINATOR ("COORDINATOR"),
-    ADMIN       ("ADMIN");
+    USER("USER"),
+    COORDINATOR("COORDINATOR"),
+    ADMIN("ADMIN");
 
     String role;
 
-    private Role(String role){
+    private Role(String role) {
         this.role = role;
     }
 

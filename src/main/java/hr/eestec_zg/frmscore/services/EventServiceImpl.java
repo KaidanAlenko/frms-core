@@ -16,7 +16,9 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository) { this.eventRepository = eventRepository; }
+    public EventServiceImpl(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
+    }
 
     @Override
     public void createEvent(Event event) {
