@@ -9,6 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.DUMMY_VALUE;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_NAME_3;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_SHORT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_SHORT_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_SHORT_NAME_3;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_YEAR_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_YEAR_3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -18,109 +27,109 @@ public class EventServiceTest extends TestBase {
     @Autowired
     private EventService eventService;
 
-    private Event event;
-    private Event event3;
+    private Event testEvent1;
+    private Event testEvent2;
 
     @Before
     public void setTestData() {
-        event = new Event("span", "S", "2017");
-        Event event2 = new Event("infobip", "IB", "2017");
-        eventRepository.createEvent(event);
-        eventRepository.createEvent(event2);
+        testEvent1 = new Event(TEST_EVENT_NAME_1, TEST_EVENT_SHORT_NAME_1, TEST_EVENT_YEAR_1);
+        Event testEvent = new Event(TEST_EVENT_NAME_2, TEST_EVENT_SHORT_NAME_2, TEST_EVENT_YEAR_1);
+
+        eventRepository.createEvent(testEvent1);
+        eventRepository.createEvent(testEvent);
     }
 
     @Test
-    public void testGetEventByName() {
-        Event event3 = eventService.getEventByName("span");
+    public void testGettingEventByName() {
+        Event event3 = eventService.getEventByName(TEST_EVENT_NAME_1);
+
         assertNotNull(event3);
     }
 
     @Test
-    public void testGetEventById() {
-        Event event3 = eventService.getEventById(event.getId());
-        assertEquals(event, event3);
+    public void testGettingEventById() {
+        Event testEvent = eventService.getEventById(testEvent1.getId());
+
+        assertEquals(testEvent1, testEvent);
     }
 
     @Test(expected = EventNotFoundException.class)
-    public void testGetEventByNameFail() {
-        eventService.getEventByName("pasn");
+    public void testGettingNonExistingEventByName() {
+        eventService.getEventByName(DUMMY_VALUE);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIllegalArgumentException() {
+    public void testDeletingOfEventWithoutSendingId() {
         eventService.deleteEvent(null);
     }
 
     @Test(expected = EventNotFoundException.class)
-    public void testEventNotFoundExceptionDelete() {
-        Event event3 = eventService.getEventByName("pasn");
-        eventService.deleteEvent(event3.getId());
-    }
+    public void testUpdatingNonExistingEvent() {
+        Event testEvent = new Event(DUMMY_VALUE, TEST_EVENT_SHORT_NAME_1, TEST_EVENT_YEAR_1);
 
-    @Test(expected = EventNotFoundException.class)
-    public void testEventNotFoundExceptionUpdate() {
-        Event event3 = new Event("spaasdasdadn", "S", "2017");
-
-        eventService.updateEvent(event3);
+        eventService.updateEvent(testEvent);
     }
 
     @Test
-    public void testUpdateEvent() {
-        Event event3 = eventService.getEventByName("span");
-        event3.setShortName("bla");
-        eventService.updateEvent(event3);
+    public void testUpdatingEvent() {
+        Event testEvent = eventService.getEventByName(TEST_EVENT_NAME_1);
+        testEvent.setShortName("bla");
 
-        Event event4 = eventService.getEventByName("span");
-        String year = event4.getYear();
-        String shortName = event4.getShortName();
-        assertEquals("2017", year);
+        eventService.updateEvent(testEvent);
+
+        Event event = eventService.getEventByName(TEST_EVENT_NAME_1);
+
+        String year = event.getYear();
+        String shortName = event.getShortName();
+
+        assertEquals(TEST_EVENT_YEAR_1, year);
         assertEquals("bla", shortName);
     }
 
     @Test
-    public void testGetEventsByYear() {
-        event3 = new Event("globallogic", "GL", "2015");
-        eventService.createEvent(event3);
+    public void testGettingEventByYear() {
+        testEvent2 = new Event(TEST_EVENT_NAME_3, TEST_EVENT_SHORT_NAME_3, TEST_EVENT_YEAR_3);
+        eventService.createEvent(testEvent2);
 
-        List<Event> events = eventService.getEventsByYear("2015");
-        event = eventService.getEventById(event3.getId());
+        List<Event> events = eventService.getEventsByYear(TEST_EVENT_YEAR_3);
+        testEvent1 = eventService.getEventById(testEvent2.getId());
 
         assertEquals(1, events.size());
-        assertEquals(event3, event);
-        assertTrue("There is no event with name " + event3.getName() + " stored", events.contains(event3));
+        assertEquals(testEvent2, testEvent1);
+        assertTrue("There is no testEvent1 with name " + testEvent2.getName() + " stored", events.contains(testEvent2));
     }
 
     @Test
-    public void testGetEventsByYearFail() {
-        List<Event> events = eventService.getEventsByYear("1991");
+    public void testGettingEventsByNonExistingYear() {
+        List<Event> events = eventService.getEventsByYear(DUMMY_VALUE);
         assertEquals(0, events.size());
     }
 
     @Test
-    public void testGetEvents() {
+    public void testGettingEvents() {
         List<Event> events = eventService.getEvents();
         assertEquals(2, events.size());
     }
 
     @Test
-    public void testCreateDeleteEvent() {
-        List<Event> events = eventService.getEventsByYear("2017");
+    public void testCreationAndDeletionOfEvent() {
+        List<Event> events = eventService.getEventsByYear(TEST_EVENT_YEAR_1);
         assertEquals(2, events.size());
 
-        Long a = event.getId();
+        Long a = testEvent1.getId();
         eventService.deleteEvent(a);
         a++;
         eventService.deleteEvent(a);
 
-        events = eventService.getEventsByYear("2017");
+        events = eventService.getEventsByYear(TEST_EVENT_YEAR_1);
         assertEquals(0, events.size());
 
-        event3 = new Event("globallogic", "GL", "2017");
-        eventService.createEvent(event3);
-        events = eventService.getEventsByYear("2017");
+        testEvent2 = new Event(TEST_EVENT_NAME_3, TEST_EVENT_SHORT_NAME_3, TEST_EVENT_YEAR_1);
+        eventService.createEvent(testEvent2);
+        events = eventService.getEventsByYear(TEST_EVENT_YEAR_1);
 
         assertEquals(1, events.size());
-        assertTrue("There is no event with name " + event3.getName() + " stored", events.contains(event3));
+        assertTrue("There is no testEvent1 with name " + testEvent2.getName() + " stored", events.contains(testEvent2));
 
     }
 

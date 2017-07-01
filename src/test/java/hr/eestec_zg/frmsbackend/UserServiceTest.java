@@ -16,6 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_SHORT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_SHORT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_YEAR_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_FIRST_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_FIRST_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_FIRST_NAME_3;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_LAST_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_LAST_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_LAST_NAME_3;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_MAIL_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_MAIL_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_MAIL_3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,143 +37,208 @@ public class UserServiceTest extends TestBase {
 
     @Autowired
     private UserService userService;
-    private Company c;
-    private Event event;
-    private User user1,user2,user3,user4;
+
+    private Company testCompany1;
+    private Event testEvent1;
+    private User testUser1;
+    private User testUser2;
+    private User testUser3;
 
     @Before
-    public void setTestData(){
-        c = new Company("COMPANY", "C", CompanyType.COMPUTING);
-        event = new Event("E", "E", "2017");
-        user1 = new User("F", "L", "email1", "pass1", "0001", Role.USER, null);
-        user2 = new User("F", "A", "email2", "pass2", "0002", Role.COORDINATOR, null);
-        user3 = new User("G", "L", "email3", "pass3", "0003", Role.COORDINATOR, null);
-        companyRepository.createCompany(c);
-        eventRepository.createEvent(event);
-        userRepository.createUser(user1);
-        userRepository.createUser(user2);
-        userRepository.createUser(user3);
+    public void setTestData() {
+        testCompany1 = new Company(TEST_COMPANY_NAME_1, TEST_COMPANY_SHORT_NAME_1, CompanyType.COMPUTING);
+        companyRepository.createCompany(testCompany1);
+
+        testEvent1 = new Event(TEST_EVENT_NAME_1, TEST_EVENT_SHORT_NAME_1, TEST_EVENT_YEAR_1);
+        eventRepository.createEvent(testEvent1);
+
+        testUser1 = new User(
+                TEST_USER_FIRST_NAME_1,
+                TEST_USER_LAST_NAME_1,
+                TEST_USER_MAIL_1,
+                "pass1",
+                "0001",
+                Role.USER,
+                null
+        );
+        userRepository.createUser(testUser1);
+
+        testUser2 = new User(
+                TEST_USER_FIRST_NAME_2,
+                TEST_USER_LAST_NAME_2,
+                TEST_USER_MAIL_2,
+                "pass2",
+                "0002",
+                Role.COORDINATOR,
+                null
+        );
+        userRepository.createUser(testUser2);
+
+        testUser3 = new User(
+                TEST_USER_FIRST_NAME_3,
+                TEST_USER_LAST_NAME_3,
+                TEST_USER_MAIL_3,
+                "pass3",
+                "0003",
+                Role.COORDINATOR,
+                null
+        );
+        userRepository.createUser(testUser3);
     }
 
     @Test
     public void testGettingAllTasksForAssignee() {
         // resources
-        Task task = new Task(event, c, user1, SponsorshipType.FINANCIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+        Task task = new Task(
+                testEvent1,
+                testCompany1,
+                testUser1,
+                SponsorshipType.FINANCIAL,
+                null, null, null,
+                TaskStatus.IN_PROGRESS,
+                ""
+        );
         taskRepository.createTask(task);
         // method
-        User u = userRepository.getUserByEmail("email1");
+        User u = userRepository.getUserByEmail(TEST_USER_MAIL_1);
         List<Task> tasks = userService.getAssignedTasks(u.getId(), TaskStatus.IN_PROGRESS);
         // check
-        assertEquals(1,tasks.size());
+        assertEquals(1, tasks.size());
     }
 
     @Test
-    public void testGettingAllTasksForAssigneeFail() {
+    public void testGettingAllTasksForNonExistingAssignee() {
         // resources
-        Task task = new Task(event, c, null, SponsorshipType.FINANCIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+        Task task = new Task(
+                testEvent1,
+                testCompany1,
+                null,
+                SponsorshipType.FINANCIAL,
+                null, null, null,
+                TaskStatus.IN_PROGRESS,
+                ""
+        );
         taskRepository.createTask(task);
         // method
-        User u = userRepository.getUserByEmail("email1");
-        List<Task> tasks = userService.getAssignedTasks(u.getId(), TaskStatus.IN_PROGRESS);
+        User testUser = userRepository.getUserByEmail(TEST_USER_MAIL_1);
+        List<Task> tasks = userService.getAssignedTasks(testUser.getId(), TaskStatus.IN_PROGRESS);
         // check
         assertEquals(0, tasks.size());
     }
 
 
     @Test
-    public void testGetAllUsers(){
+    public void testGettingAllUsers() {
         List<User> users = userService.getAllUsers();
-        assertTrue (users.size()==3 && users.contains(user1) && users.contains(user2) && users.contains(user3));
+
+        assertTrue(
+                users.size() == 3 &&
+                users.contains(testUser2) &&
+                users.contains(testUser1) &&
+                users.contains(testUser3));
     }
 
     @Test
-    public void testGetUsersByName(){
-        List<User> usersByFullName = userService.getUsersByName("F","L");
-        List<User> usersByFirstName = userService.getUsersByName("F",null);
-        List<User> usersByLastName = userService.getUsersByName(null,"L");
-        //List<User> usersByNullName = userRepository.getUsersByName(null,null);
+    public void testGettingUsersByName() {
+        List<User> usersByFullName = userService.getUsersByName(TEST_USER_FIRST_NAME_1, TEST_USER_LAST_NAME_1);
+        List<User> usersByFirstName = userService.getUsersByName(TEST_USER_FIRST_NAME_1, null);
+        List<User> usersByLastName = userService.getUsersByName(null, TEST_USER_LAST_NAME_1);
 
-        assertTrue(usersByFullName.size()==1 && usersByFullName.contains(user1));
-        assertTrue(usersByFirstName.size()==2 && usersByFirstName.contains(user1) && usersByFirstName.contains(user2));
-        assertTrue(usersByLastName.size()==2 && usersByLastName.contains(user1) && usersByLastName.contains(user3));
-        //assertTrue(usersByNullName.size()==0);
+        assertTrue(usersByFullName.size() == 2 && usersByFullName.contains(testUser1));
+        assertTrue(
+                usersByFirstName.size() == 2 &&
+                usersByFirstName.contains(testUser1) &&
+                usersByFirstName.contains(testUser2));
+        assertTrue(
+                usersByLastName.size() == 2 &&
+                usersByLastName.contains(testUser1));
     }
 
     @Test
-    public void testGetUsersByRole(){
+    public void testGettingUsersByRole() {
         List<User> usersUser = userService.getUsersByRole(Role.USER);
         List<User> usersCoordinator = userService.getUsersByRole(Role.COORDINATOR);
-        List<User> usersAdmin= userService.getUsersByRole(Role.ADMIN);
-        //List<User> usersWithNullRole = userRepository.getUsersByRole(null);
+        List<User> usersAdmin = userService.getUsersByRole(Role.ADMIN);
 
-        assertTrue(usersUser.size()==1 && usersUser.contains(user1));
-        assertTrue(usersCoordinator.size()==2 && usersCoordinator.contains(user2) && usersCoordinator.contains(user3));
-        assertTrue(usersAdmin.size()==0);
-        //assertTrue(usersWithNullRole.size()==0);
+        assertTrue(usersUser.size() == 1 && usersUser.contains(testUser1));
+        assertTrue(
+                usersCoordinator.size() == 2 &&
+                usersCoordinator.contains(testUser2) &&
+                usersCoordinator.contains(testUser3));
+        assertTrue(usersAdmin.size() == 0);
     }
 
     @Test
-    public void testGetUserById(){
-        userRepository.createUser(user1);
-        User userById = userService.getUserById(user1.getId());
-        assertTrue(userById.getId()==user1.getId());
+    public void testGettingUserById() {
+        userRepository.createUser(testUser1);
+        User testUser = userService.getUserById(testUser1.getId());
+
+        assertTrue(testUser.getId() == testUser1.getId());
     }
 
     @Test
-    public void testGetUserByEmail(){
-        userRepository.createUser(user1);
-        User userByEmail = userService.getUserByEmail("email1");
-        assertTrue(user1.getEmail().equals(userByEmail.getEmail()));
+    public void testGettingUserByEmail() {
+        userRepository.createUser(testUser1);
+        User testUser = userService.getUserByEmail(TEST_USER_MAIL_1);
+
+        assertTrue(testUser1.getEmail().equals(testUser.getEmail()));
     }
 
     @Test
-    public void testGetUserByPhoneNumber(){
-        userRepository.createUser(user1);
-        User userByEmail = userService.getUserByPhoneNumber("0001");
-        assertTrue(user1.getPhoneNumber().equals(userByEmail.getPhoneNumber()));
+    public void testGettingUserByPhoneNumber() {
+        userRepository.createUser(testUser1);
+        User testUser = userService.getUserByPhoneNumber("0001");
+
+        assertTrue(testUser1.getPhoneNumber().equals(testUser.getPhoneNumber()));
 
     }
 
     @Test
-    public void testCreateUser(){
-        user1 = new User("Fafa", "Fufa", "em11aial1@ss", "pass1", "0001", Role.USER, null);
-        userService.createUser(user1);
-        assertEquals("em11aial1@ss",userService.getUserByEmail("em11aial1@ss").getEmail());
+    public void testCreationOfUser() {
+        testUser1 = new User("Fafa", "Fufa", "em11aial1@ss", "pass1", "0001", Role.USER, null);
+        userService.createUser(testUser1);
+
+        assertEquals("em11aial1@ss", userService.getUserByEmail("em11aial1@ss").getEmail());
     }
 
     @Test
-    public void testUpdateUser(){
-     user1 = userService.getUserByEmail("email1");
-     user1.setEmail("asdasdasdasd@haha");
-     userService.updateUser(user1);
-     assertEquals("asdasdasdasd@haha",userService.getUserByEmail("asdasdasdasd@haha").getEmail());
+    public void testUpdatingUser() {
+        testUser1 = userService.getUserByEmail(TEST_USER_MAIL_1);
+        testUser1.setEmail("asdasdasdasd@haha");
+
+        userService.updateUser(testUser1);
+
+        assertEquals("asdasdasdasd@haha", userService.getUserByEmail("asdasdasdasd@haha").getEmail());
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void testDeleteUserFail(){
+    public void testDeletingNonExistingUser() {
 
-        userService.deleteUser(67586755L);
+        userService.deleteUser(-1L);
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void testUpdateUserFail(){
+    public void testUpdatingNonExistingUser() {
+        testUser1.setId(-1L);
 
-        user1 = userService.getUserById(67586755L);
-        user1.setFirstName("asdasd");
-        userService.updateUser(user1);
+        testUser1.setFirstName("asdasd");
+        userService.updateUser(testUser1);
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void testDeleteUser(){
-      userService.deleteUser(userService.getUserByEmail("email1").getId());
-      assertEquals(null,userService.getUserByEmail("asdasdasdasd@haha").getEmail());
+    public void testDeletingUser() {
+        userService.deleteUser(userService.getUserByEmail(TEST_USER_MAIL_1).getId());
+        assertEquals(null, userService.getUserByEmail("asdasdasdasd@haha").getEmail());
     }
 
     @Test
-    public void testChangePassUser(){
-        user1 = userService.getUserByEmail("email1");
-        userService.changePassword(user1.getId(),"pass1","blabla");
-        user2 = userService.getUserByEmail("email1");
-        assertEquals("blabla",user2.getPassword());
+    public void testChangingUserPassword() {
+        testUser1 = userService.getUserByEmail(TEST_USER_MAIL_1);
+
+        userService.changePassword(testUser1.getId(), "pass1", "blabla");
+
+        testUser2 = userService.getUserByEmail(TEST_USER_MAIL_1);
+
+        assertEquals("blabla", testUser2.getPassword());
     }
 }

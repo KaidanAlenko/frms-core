@@ -19,6 +19,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.DUMMY_VALUE;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_SHORT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_SHORT_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_SHORT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_EVENT_YEAR_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_FIRST_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_FIRST_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_LAST_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_LAST_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_MAIL_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_USER_MAIL_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -27,50 +40,111 @@ public class TaskServiceTest extends TestBase {
 
     @Autowired
     private TaskService taskService;
-    private Task t1, t2;
-    private Event event;
-    private User user, user2;
+
+    private Task testTask1;
+    private Event testEvent;
+    private User testUser1, testUser2;
     private Company company;
 
     @Before
     public void setTestData() {
-        event = new Event("E", "E", "2017");
-        user = new User("F", "L", "email1", "pass1", "0001", Role.USER, null);
-        company = new Company("COMPANY", "C", CompanyType.COMPUTING);
+        testEvent = new Event(TEST_EVENT_SHORT_NAME_1, TEST_EVENT_SHORT_NAME_1, TEST_EVENT_YEAR_1);
+        eventRepository.createEvent(testEvent);
+
+        company = new Company(TEST_COMPANY_NAME_1, TEST_COMPANY_SHORT_NAME_1, CompanyType.COMPUTING);
         companyRepository.createCompany(company);
-        eventRepository.createEvent(event);
-        userRepository.createUser(user);
-        t1 = new Task(event, company, user, SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
-        taskRepository.createTask(t1);
+
+        testUser1 = new User(
+                TEST_USER_FIRST_NAME_1,
+                TEST_USER_LAST_NAME_1,
+                TEST_USER_MAIL_1,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                Role.USER,
+                null
+        );
+        userRepository.createUser(testUser1);
+
+        testTask1 = new Task(
+                testEvent, company, testUser1, SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+        taskRepository.createTask(testTask1);
     }
 
     @Test
-    public void testCreateTask() {
-        user2 = new User("Fico", "Ls", "emaail1", "psass1", "0001", Role.USER, null);
-        userRepository.createUser(user2);
-        TaskDto task = new TaskDto(event.getId(), company.getId(), user2.getId(), SponsorshipType.FINANCIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
-        Task newTask = taskService.createTask(task);
+    public void testCreationOfTask() {
+        testUser2 = new User(
+                TEST_USER_FIRST_NAME_2,
+                TEST_USER_LAST_NAME_2,
+                TEST_USER_MAIL_2,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                Role.USER,
+                null
+        );
+        userRepository.createUser(testUser2);
+
+        TaskDto taskDto = new TaskDto(
+                testEvent.getId(),
+                company.getId(),
+                testUser2.getId(),
+                SponsorshipType.FINANCIAL,
+                null, null, null,
+                TaskStatus.IN_PROGRESS,
+                ""
+        );
+        Task newTask = taskService.createTask(taskDto);
+
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
+
         assertTrue(tasks.size() == 2 && tasks.contains(newTask));
     }
 
     @Test
-    public void testCreateDeleteTask() {
-        user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER, null);
-        userRepository.createUser(user2);
-        TaskDto task = new TaskDto(event.getId(), company.getId(), user2.getId(), SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+    public void testCreationAndDeletionOfTask() {
+        testUser2 = new User(
+                TEST_USER_FIRST_NAME_2,
+                TEST_USER_LAST_NAME_2,
+                TEST_USER_MAIL_2,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                Role.USER,
+                null
+        );
+        userRepository.createUser(testUser2);
+
+        TaskDto task = new TaskDto(
+                testEvent.getId(),
+                company.getId(),
+                testUser2.getId(),
+                SponsorshipType.MATERIAL,
+                null, null, null,
+                TaskStatus.IN_PROGRESS,
+                ""
+        );
         Task newTask = taskService.createTask(task);
-        taskService.deleteTask(t1);
+
+        taskService.deleteTask(testTask1);
+
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
+
         assertTrue(tasks.size() == 1 && tasks.contains(newTask));
     }
 
     @Test
-    public void testGetUpdateTask() {
-        user2 = new User("Ficasdo", "Lfs", "emagail1", "psagss1", "0001", Role.USER, null);
-        userRepository.createUser(user2);
-        Task task = taskService.getTask(t1.getId());
-        task.setAssignee(user2);
+    public void testUpdatingTask() {
+        testUser2 = new User(
+                TEST_USER_FIRST_NAME_2,
+                TEST_USER_LAST_NAME_2,
+                TEST_USER_MAIL_2,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                Role.USER,
+                null
+        );
+        userRepository.createUser(testUser2);
+
+        Task task = taskService.getTask(testTask1.getId());
+        task.setAssignee(testUser2);
 
         TaskDto taskDto = new TaskDto(
                 task.getEvent().getId(),
@@ -90,55 +164,61 @@ public class TaskServiceTest extends TestBase {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIllegalArgumentExceptionCreateTask() {
+    public void testCreationOfTaskWithoutTaskData() {
         taskService.createTask(null);
     }
 
     @Test(expected = TaskNotFoundException.class)
-    public void testTaskNotFoundExceptionGetTask() {
+    public void testGettingNonExistingTask() {
 
-        taskService.getTask(7777L);
+        taskService.getTask(-1L);
     }
 
     @Test(expected = UserNotFoundException.class)
-    public void testAssigneeNotFoundException() {
-        taskService.assignToUser(7777L, t1);
+    public void testAssigningNonExistingUserToTask() {
+        taskService.assignToUser(-1L, testTask1);
     }
 
     @Test
     public void testAssignToUser() {
-        t2 = new Task(event, company, null, SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
-        taskService.assignToUser(user.getId(), t2);
-        assertNotNull(t2.getAssignee());
+        Task testTask2 = new Task(
+                testEvent, company, null, SponsorshipType.MATERIAL, null, null, null, TaskStatus.IN_PROGRESS, "");
+
+        taskService.assignToUser(testUser1.getId(), testTask2);
+
+        assertNotNull(testTask2.getAssignee());
     }
 
     @Test
-    public void testGetTasksByCompany() {
+    public void testGettingTasksByCompany() {
         List<Task> tasks = taskService.getTasksByCompany(company.getId());
+
         assertEquals(1, tasks.size());
     }
 
     @Test
-    public void testGetTasksByEvent() {
-        List<Task> tasks = taskService.getTasksByEvent(event.getId());
+    public void testGettingTasksByEvent() {
+        List<Task> tasks = taskService.getTasksByEvent(testEvent.getId());
+
         assertEquals(1, tasks.size());
     }
 
     @Test
-    public void testGetCompaniesForTaskCreation() {
-        List<Company> companies = taskService.getCompaniesForWhichThereAreNoTasksForEvent(event.getId());
+    public void testCreatingTask() {
+        List<Company> companies = taskService.getCompaniesForWhichThereAreNoTasksForEvent(testEvent.getId());
+
         assertEquals(0, companies.size());
 
-        Company c = new Company("CompanyName", "CompanyShortName", CompanyType.COMPUTING);
+        Company c = new Company(TEST_COMPANY_NAME_2, TEST_COMPANY_SHORT_NAME_2, CompanyType.COMPUTING);
         companyRepository.createCompany(c);
 
-        companies = taskService.getCompaniesForWhichThereAreNoTasksForEvent(event.getId());
+        companies = taskService.getCompaniesForWhichThereAreNoTasksForEvent(testEvent.getId());
         assertEquals(1, companies.size());
     }
 
     @Test
-    public void testGetStatisticsForTask() {
-        TaskStatisticsDto taskStatisticsDto = taskService.getStatistics(t1.getAssignee().getId());
+    public void testGettingStatisticsForTask() {
+        TaskStatisticsDto taskStatisticsDto = taskService.getStatistics(testTask1.getAssignee().getId());
 
         assertEquals(0, (long) taskStatisticsDto.getSuccessful());
         assertEquals(0, (long) taskStatisticsDto.getUnsuccessful());

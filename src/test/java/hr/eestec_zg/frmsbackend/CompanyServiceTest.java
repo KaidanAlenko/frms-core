@@ -10,6 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.DUMMY_VALUE;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_NAME_2;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_NAME_3;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_SHORT_NAME_1;
+import static hr.eestec_zg.frmsbackend.utils.TestDataUtils.TEST_COMPANY_SHORT_NAME_2;
 import static hr.eestec_zg.frmscore.domain.models.CompanyType.COMPUTING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,110 +26,152 @@ public class CompanyServiceTest extends TestBase {
     @Autowired
     private CompanyService companyService;
 
-    private Company company;
-    private Company company3;
+    private Company testCompany1;
+    private Company testCompany2;
 
     @Before
     public void setTestData() {
-        company = new Company("span", "S", COMPUTING);
-        Company company2 = new Company("infobip", "IB", COMPUTING);
-        companyRepository.createCompany(company);
+        testCompany1 = new Company(TEST_COMPANY_NAME_1, TEST_COMPANY_SHORT_NAME_1, COMPUTING);
+        Company company2 = new Company(TEST_COMPANY_NAME_2, TEST_COMPANY_SHORT_NAME_2, COMPUTING);
+
+        companyRepository.createCompany(testCompany1);
         companyRepository.createCompany(company2);
     }
 
     @Test
-    public void testGetCompanyByName() {
-        Company company3 = companyService.getCompanyByName("span");
-        assertNotNull(company3);
+    public void testGettingCompanyByName() {
+        Company testCompany = companyService.getCompanyByName(TEST_COMPANY_NAME_1);
+
+        assertNotNull(testCompany);
     }
 
     @Test(expected = CompanyNotFoundException.class)
-    public void testGetCompanyByNameFail() {
+    public void testGettingNonExistingCompanyByName() {
         companyService.getCompanyByName("pasn");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testIllegalArgumentException() {
+    public void testDeletingCompanyWithoutSendingId() {
         companyService.deleteCompany(null);
     }
 
     @Test(expected = CompanyNotFoundException.class)
-    public void testCompanyNotFoundExceptionDelete() {
-        Company company3 = companyService.getCompanyByName("pasn");
-        companyService.deleteCompany(company3.getId());
+    public void testDeletingNonExistingCompany() {
+        Company testCompany = companyService.getCompanyByName("pasn");
+
+        companyService.deleteCompany(testCompany.getId());
     }
 
     @Test(expected = CompanyNotFoundException.class)
-    public void testCompanyNotFoundExceptionPut() {
-        Company company3 = new Company("spaasdasdadn", "S", COMPUTING);
+    public void testUpdatingNonExistingCompany() {
+        Company testCompany = new Company("spaasdasdadn", TEST_COMPANY_SHORT_NAME_1, COMPUTING);
 
-        companyService.updateCompany(company3);
+        companyService.updateCompany(testCompany);
     }
 
     @Test
-    public void testUpdateCompany() {
-        Company company3 = companyService.getCompanyByName("span");
-        company3.setAddress("asfadsfas");
-        companyService.updateCompany(company3);
+    public void testUpdatingCompany() {
+        Company testCompany = companyService.getCompanyByName(TEST_COMPANY_NAME_1);
+        testCompany.setAddress("asfadsfas");
+        companyService.updateCompany(testCompany);
 
-        Company company4 = companyService.getCompanyByName("span");
-        String add = company4.getAddress();
-        String shortn = company4.getShortName();
-        assertEquals(add, "asfadsfas");
-        assertEquals(shortn, "S");
+        Company company = companyService.getCompanyByName(TEST_COMPANY_NAME_1);
+        String address = company.getAddress();
+        String shortName = company.getShortName();
+
+        assertEquals(address, "asfadsfas");
+        assertEquals(shortName, TEST_COMPANY_SHORT_NAME_1);
     }
 
     @Test
-    public void testGetCompaniesByType() {
-        company3 = new Company("globallogic", "GL", "gll.com", "vukovarska 2", "poruke", CompanyType.AUTOMATIZATION);
-        companyService.createCompany(company3);
+    public void testGettingCompaniesByType() {
+        testCompany2 = new Company(
+                TEST_COMPANY_NAME_3,
+                TEST_COMPANY_SHORT_NAME_2,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                CompanyType.AUTOMATIZATION
+        );
+
+        companyService.createCompany(testCompany2);
+
         List<Company> companies = companyService.getCompaniesByType(CompanyType.AUTOMATIZATION);
-        company = companyService.getCompanyById(company3.getId());
+        testCompany1 = companyService.getCompanyById(testCompany2.getId());
+
         assertEquals(1, companies.size());
-        assertEquals(company,company3);
-        assertTrue("There is no company with name " + company3.getName() + " stored", companies.contains(company3));
+        assertEquals(testCompany1, testCompany2);
+        assertTrue(
+                "There is no testCompany1 with name " + testCompany2.getName() + " stored",
+                companies.contains(testCompany2));
     }
 
     @Test
-    public void testGetCompaniesByTypeFail() {
+    public void testGetCompaniesByTypeWhenThereAreNoCompaniesOfThatType() {
         List<Company> companies = companyService.getCompaniesByType(CompanyType.AUTOMATIZATION);
+
         assertEquals(0, companies.size());
     }
 
     @Test
-    public void testGetCompanies() {
+    public void testGettingCompanies() {
         List<Company> companies = companyService.getCompanies();
+
         assertEquals(2, companies.size());
     }
 
     @Test
-    public void testFilterCompanies() {
-        List<Company> companies = companyService.filterCompanies("span", COMPUTING);
+    public void testFilteringCompanies() {
+        List<Company> companies = companyService.filterCompanies(TEST_COMPANY_NAME_1, COMPUTING);
+
         assertEquals(1, companies.size());
     }
 
     @Test
-    public void testCreateCompanyAutomatization() {
-        company3 = new Company("globallogic", "GL", "gll.com", "vukovarska 2", "poruke", CompanyType.AUTOMATIZATION);
-        companyService.createCompany(company3);
+    public void testCreationOfCompany() {
+        testCompany2 = new Company(
+                TEST_COMPANY_NAME_3,
+                TEST_COMPANY_SHORT_NAME_2,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                CompanyType.AUTOMATIZATION
+        );
+
+        companyService.createCompany(testCompany2);
+
         List<Company> companies = companyService.getCompaniesByType(CompanyType.AUTOMATIZATION);
 
-        assertTrue(companies.size() == 1 && companies.contains(company3));
+        assertTrue(companies.size() == 1 && companies.contains(testCompany2));
     }
 
     @Test
-    public void testCreateDeleteCompany() {
-        Long a = company.getId();
-        companyService.deleteCompany(a);
-        a++;
-        companyService.deleteCompany(a);
+    public void testCreatingAndDeletingCompany() {
+        Long companyId = testCompany1.getId();
+
+        companyService.deleteCompany(companyId);
+
+        companyId++;
+        companyService.deleteCompany(companyId);
+
         List<Company> companies = companyService.getCompaniesByType(CompanyType.COMPUTING);
+
         assertEquals(0, companies.size());
-        company3 = new Company("globallogic", "GL", "gll.com", "vukovarska 2", "poruke", CompanyType.COMPUTING);
-        companyService.createCompany(company3);
+
+        testCompany2 = new Company(
+                TEST_COMPANY_NAME_3,
+                TEST_COMPANY_SHORT_NAME_2,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                DUMMY_VALUE,
+                CompanyType.COMPUTING
+        );
+
+        companyService.createCompany(testCompany2);
+
         companies = companyService.getCompaniesByType(CompanyType.COMPUTING);
 
-        assertTrue(companies.size() == 1 && companies.contains(company3));
+        assertTrue(companies.size() == 1 && companies.contains(testCompany2));
     }
 
 }
