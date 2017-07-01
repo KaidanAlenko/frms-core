@@ -2,6 +2,8 @@ package hr.eestec_zg.frmscore.domain;
 
 import hr.eestec_zg.frmscore.domain.models.Role;
 import hr.eestec_zg.frmscore.domain.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @Repository
 @Transactional
 public class DatabaseBackedUserRepository extends AbstractRepository<Long, User> implements UserRepository {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseBackedUserRepository.class);
 
     private static final String EMAIL = "email";
     private static final String PHONE_NUMBER = "phoneNumber";
@@ -99,6 +102,7 @@ public class DatabaseBackedUserRepository extends AbstractRepository<Long, User>
         try {
             return getSession().createQuery(query).getSingleResult();
         } catch (NoResultException ex) {
+            logger.debug("No results");
             return null;
         }
     }

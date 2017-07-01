@@ -26,6 +26,8 @@ import java.util.List;
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
+    private static final String TASK_NOT_DEFINED_MESSAGE = "Task not defined";
+
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
@@ -44,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task createTask(TaskDto task) {
         if (task == null) {
-            throw new IllegalArgumentException("Task not defined");
+            throw new IllegalArgumentException(TASK_NOT_DEFINED_MESSAGE);
         }
         User user = userRepository.getUser(task.getUserId());
         Company company = companyRepository.getCompany(task.getCompanyId());
@@ -64,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateTask(Long id, TaskDto task) {
         if (task == null) {
-            throw new IllegalArgumentException("Task not defined");
+            throw new IllegalArgumentException(TASK_NOT_DEFINED_MESSAGE);
         }
 
         Task oldTask = this.taskRepository.getTask(id);
@@ -102,7 +104,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void deleteTask(Task task) {
         if (task == null) {
-            throw new IllegalArgumentException("Task not defined");
+            throw new IllegalArgumentException(TASK_NOT_DEFINED_MESSAGE);
         }
         taskRepository.deleteTask(task);
     }
@@ -110,7 +112,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void assignToUser(Long userId, Task task) {
         if (userId == null) {
-            throw new IllegalArgumentException("UserId not defined");
+            throw new IllegalArgumentException("User id not defined");
         }
         User user = userRepository.getUser(userId);
         if (user == null) {
@@ -135,7 +137,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getTasksByAssignee(Long userId) {
         if (userId == null) {
-            throw new IllegalArgumentException("UserId not defined");
+            throw new IllegalArgumentException("User id not defined");
         }
         User user = userRepository.getUser(userId);
         if (user == null) {
@@ -154,7 +156,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getTasksByEvent(Long eventId) {
         if (eventId == null) {
-            throw new IllegalArgumentException("EventId not defined");
+            throw new IllegalArgumentException("Event id not defined");
         }
         Event event = eventRepository.getEvent(eventId);
         if (event == null) {
@@ -191,7 +193,7 @@ public class TaskServiceImpl implements TaskService {
 
         List<Long> companyIds = taskRepository.getCompanyIdsByEventId(eventId);
 
-        if (companyIds.size() != 0) {
+        if (companyIds.isEmpty()) {
             return companyRepository.getCompaniesWhichAreNotInIdList(companyIds);
         } else {
             return companyRepository.getCompanies();

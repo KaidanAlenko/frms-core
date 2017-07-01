@@ -39,15 +39,4 @@ public class JacksonService {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         return LambdaUtil.uncheckCall(() -> objectMapper.writeValueAsString(obj));
     }
-
-    public <K> boolean isValidJsonForListOfObjects(String content, Class<K> clazz) {
-        JavaType type = objectMapper.getTypeFactory().constructCollectionType(List.class, clazz);
-        try {
-            objectMapper.readValue(content, type);
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
-    }
-
 }

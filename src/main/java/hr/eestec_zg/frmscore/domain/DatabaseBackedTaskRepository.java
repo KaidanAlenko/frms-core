@@ -6,6 +6,8 @@ import hr.eestec_zg.frmscore.domain.models.SponsorshipType;
 import hr.eestec_zg.frmscore.domain.models.Task;
 import hr.eestec_zg.frmscore.domain.models.TaskStatus;
 import hr.eestec_zg.frmscore.domain.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Repository
 @Transactional
 public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task> implements TaskRepository {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseBackedTaskRepository.class);
 
     private static final String ID = "id";
     private static final String STATUS = "status";
@@ -193,6 +196,7 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
         try {
             return getSession().createQuery(query).getSingleResult();
         } catch (NoResultException ex) {
+            logger.debug("No results");
             return null;
         }
     }

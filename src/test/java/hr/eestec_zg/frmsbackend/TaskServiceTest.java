@@ -207,13 +207,13 @@ public class TaskServiceTest extends TestBase {
     public void testCreatingTask() {
         List<Company> companies = taskService.getCompaniesForWhichThereAreNoTasksForEvent(testEvent.getId());
 
-        assertEquals(0, companies.size());
+        int size = companies.size();
 
         Company c = new Company(TEST_COMPANY_NAME_2, TEST_COMPANY_SHORT_NAME_2, CompanyType.COMPUTING);
         companyRepository.createCompany(c);
 
         companies = taskService.getCompaniesForWhichThereAreNoTasksForEvent(testEvent.getId());
-        assertEquals(1, companies.size());
+        assertEquals(size + 1, companies.size());
     }
 
     @Test

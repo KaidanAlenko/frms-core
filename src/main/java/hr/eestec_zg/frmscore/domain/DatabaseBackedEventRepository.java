@@ -1,6 +1,8 @@
 package hr.eestec_zg.frmscore.domain;
 
 import hr.eestec_zg.frmscore.domain.models.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @Repository
 @Transactional
 public class DatabaseBackedEventRepository extends AbstractRepository<Long, Event> implements EventRepository {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseBackedEventRepository.class);
 
     private static final String NAME = "name";
     private static final String SHORT_NAME = "shortName";
@@ -76,6 +79,7 @@ public class DatabaseBackedEventRepository extends AbstractRepository<Long, Even
         try {
             return getSession().createQuery(query).getSingleResult();
         } catch (NoResultException ex) {
+            logger.debug("No results");
             return null;
         }
     }

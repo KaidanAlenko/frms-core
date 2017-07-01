@@ -2,6 +2,8 @@ package hr.eestec_zg.frmscore.domain;
 
 import hr.eestec_zg.frmscore.domain.models.Company;
 import hr.eestec_zg.frmscore.domain.models.CompanyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @Repository
 @Transactional
 public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Company> implements CompanyRepository {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseBackedCompanyRepository.class);
 
     private static final String ID = "id";
     private static final String NAME = "name";
@@ -111,6 +114,7 @@ public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Co
         try {
             return getSession().createQuery(query).getSingleResult();
         } catch (NoResultException ex) {
+            logger.debug("No results");
             return null;
         }
     }

@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
@@ -33,7 +32,6 @@ public class User {
     @NotEmpty
     @Column
     private String phoneNumber;
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -41,6 +39,7 @@ public class User {
     private String notes;
 
     public User() {
+        // for jackson
     }
 
     public User(
