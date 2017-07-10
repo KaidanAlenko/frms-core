@@ -193,7 +193,7 @@ public class TaskServiceImpl implements TaskService {
 
         List<Long> companyIds = taskRepository.getCompanyIdsByEventId(eventId);
 
-        if (companyIds.isEmpty()) {
+        if (!companyIds.isEmpty()) {
             return companyRepository.getCompaniesWhichAreNotInIdList(companyIds);
         } else {
             return companyRepository.getCompanies();
