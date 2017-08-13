@@ -83,7 +83,10 @@ public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Co
                 )
         );
 
-        return getSession().createQuery(query).getResultList();
+        return getSession()
+                .createQuery(query)
+                .setMaxResults(MAX_RESULTS)
+                .getResultList();
     }
 
     @Override
@@ -120,6 +123,8 @@ public class DatabaseBackedCompanyRepository extends AbstractRepository<Long, Co
     }
 
     private List<Company> getCompanies(CriteriaQuery<Company> query) {
-        return getSession().createQuery(query).getResultList();
+        return getSession()
+                .createQuery(query)
+                .getResultList();
     }
 }

@@ -12,6 +12,8 @@ public class AbstractRepository<PK extends Serializable, T> {
 
     private final Class<T> persistentClass;
 
+    final static Integer MAX_RESULTS = 200;
+
     @SuppressWarnings("unchecked")
     public AbstractRepository() {
         this.persistentClass = (Class<T>) (

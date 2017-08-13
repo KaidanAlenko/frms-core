@@ -159,7 +159,10 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
                 )
         );
 
-        return getSession().createQuery(query).getResultList();
+        return getSession()
+                .createQuery(query)
+                .setMaxResults(MAX_RESULTS)
+                .getResultList();
     }
 
     @Override
@@ -202,7 +205,9 @@ public class DatabaseBackedTaskRepository extends AbstractRepository<Long, Task>
     }
 
     private List<Task> getTasks(CriteriaQuery<Task> query) {
-        return getSession().createQuery(query).getResultList();
+        return getSession()
+                .createQuery(query)
+                .getResultList();
     }
 
 }
