@@ -20,6 +20,9 @@ Clone this repository using HTTPS or SSH and import it to IDEA as Maven project.
 ### Run tests
 After you complete all previous steps, before project is ready to develop, you must run all tests and verify that everything is in order. It is done by right clicking on project *frms-core* in Project view in IntelliJ IDEA. Right click -> Run all tests.
 
+### Run Projects
+Once you want to run project backend you need to position yourself in root of frms-core and enter command *mvn install*
+
 #### You are ready to go
 For all additional information, contact me on `ahrga93@gmail.com` or `alen.hrga@eestec-zg.hr`
 
